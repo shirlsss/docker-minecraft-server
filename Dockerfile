@@ -1,11 +1,17 @@
-# 1. Base image: using eclipse-temurin, for lightweight alpine with JRE preinstalled
-FROM eclipse-temurin:21-jre-alpine
+# Base image: using eclipse-temurin, for lightweight JRE using Java 25
+FROM eclipse-temurin:25-jre-ubi10-minimal
 
-#2. Create and set working directory
+# Create and set working directory
 WORKDIR /minecraft-server
 
-#3. Copy the included server.jar MC server file to /minecraft-server
-COPY server.jar .
+# Copy the included server.jar MC server file to /minecraft-server
+COPY server.jar server.properties ./
 
-#4. Run commands, e.g.: eula=true
+# Run commands, e.g.: eula=true
 RUN echo "eula=true" > eula.txt
+
+# Expose default MC server port for the container to listen on
+EXPOSE 25565
+
+# Run the server.jar when the container boots up
+CMD ["java", "-jar", "server.jar"]

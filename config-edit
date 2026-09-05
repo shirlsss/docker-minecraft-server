@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+
+# Empty variable to initialize current job
+current_option=""
+
+# Variable to set which property file to use
+properties='testing.properties'
+
+# Common-use variables
+dotted_line="--------------------------------------"
+
+# Function for keeping lines tidy and nice looking
+tidyline() {
+	echo
+	echo ${dotted_line}
+	echo
+}
+
+# Print introduction
+intro() {
+echo 'Welcome to the MC server config editor!'
+echo "note: to set IP, make sure an environment variable named 'SERVER_IP' exists"
+echo 
+}
+
+# Print options for changing the server config file
+display_options() {
+cat  <<  EOF
+	.		-	Display current listed properties
+	g 		-	Change gamemode
+	h		-	Change to hardcore
+	motd 		-	Change server message
+	pvp 		-	Change PVP to true or false	
+	d		-	Change difficulty
+	f		- 	Change flight permission
+	ip		-	Change server IP
+	steve		-	Change server.properties file in vim	
+
+EOF
+}
+
+# Print the gamemode options
+display_difficulty() {
+cat << EOF
+
+	0 --- peaceful 
+	1 --- easy
+	2 --- normal
+	3 --- hard
+
+EOF
+}
+
+display_gamemode() {
+cat << EOF
+
+	0 --- survival
+	1 --- creative
+
+EOF
+}
+
+
+# Display current core settings - listed in display_options
+display_current() {
+	local gamemode=$(cat $properties | grep ^gamemode)
+	local hardcore=$(cat $properties | grep ^hardcore)
+	local difficulty=$(cat $properties | grep ^difficulty)
+	local pvp=$(cat $properties | grep ^pvp)
+	local flight=$(cat $properties | grep ^allow-flight)
+	local ip=$(cat $properties | grep ^server-ip)
+cat << EOF
+	
+	Current settings: 
+${dotted_line}
+	gamemode = ${gamemode##*=}
+	hardcore = ${hardcore##*=}
+	difficulty = ${difficulty##*=}
+	pvp = ${pvp##*=}
+	flight = ${flight##*=}
+	server-ip = ${ip##*=}
+EOF
+tidyline
+}
+
+# Set the config files gamemode difficulty - if invalid, continue looping
+# Use bash builtin sed to replace as needed
+# TODO: add a quit option
+set_difficulty() {
+	local valid=1
+	local difficulty=''
+	while [[ valid -eq 1 ]]; do
+		display_difficulty
+		read -p "Which difficulty would you like to set? " difficulty_option
+		echo 
+		if [[ $difficulty_option -eq 0 ]]; then
+					difficulty='peaceful'
+					tidyline
+					break
+				elif [[ $difficulty_option -eq 1 ]]; then
+					difficulty='easy'
+					tidyline
+					break
+				elif [[ $difficulty_option -eq 2 ]]; then
+					difficulty='normal'
+					tidyline
+					break
+				elif [[ $difficulty_option -eq 3 ]]; then
+					difficulty='hard'
+					tidyline
+					break
+				else
+					echo "Invalid option - please try again"
+					tidyline
+				fi
+	done
+	echo "Changing difficulty to ${difficulty} inside ${properties}"
+	sed -i "s/difficulty=.*/difficulty=${difficulty}/g" ${properties}
+	tidyline
+}
+
+set_gamemode() {
+	display_gamemode
+	local gamemode_setting=''
+	read -p "Which gamemode would you like to set? " gamemode_setting
+	echo 
+	case ${gamemode_setting} in
+		0)
+			echo "Setting to survival..."
+			sed -i "s/^gamemode=.*/gamemode=survival/g" ${properties}
+			;;
+		1)
+			echo "Setting to creative..."
+			sed -i "s/^gamemode=.*/gamemode=creative/g" ${properties}
+			;;
+		q)
+			echo "Exiting without changing..."
+			tidyline
+			return 1
+			;;
+		*)
+			echo "Invalid option - please try again..."
+			tidyline
+			return 1
+	esac
+	tidyline
+}
+
+# Set property file's IP to current environment variable injected by Docker under SERVER_IP. Do not hardcode IP!
+set_ip() {
+	echo "Setting server IP to current environment variable at SERVER_IP..."
+	sed -i "s/server-ip=.*/server-ip=${SERVER_IP}:25565/g" ${properties}
+	echo "Current IP=${SERVER_IP}:25565"
+	tidyline
+}
+
+
+# Allow user to choose from the following options, or to open entire config via vim if needed - continuous loop until exited
+choose_option() {
+	continue=1
+	while [[ continue -eq 1 ]]; do
+		display_options
+		read -p "Please choose from the following options, or 'q' to quit: " current_option
+		case "${current_option}" in
+			.)
+				display_current
+				;;
+			d)
+				set_difficulty
+				;;
+			g)	set_gamemode
+				;;
+			q) 
+				echo "quitting"
+				exit 1
+				;;
+			ip)
+				set_ip
+				;;
+			*)
+				echo "boo"
+				exit 1
+				;;
+		esac
+	done
+}
+
+main() {
+	intro
+	choose_option
+}
+
+main
+
+# trial() {
+# 	display_current
+# }
+
+trial
