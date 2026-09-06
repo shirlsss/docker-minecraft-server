@@ -5,10 +5,13 @@ FROM eclipse-temurin:25-jre-ubi10-minimal
 WORKDIR /minecraft-server
 
 # Copy the included server.jar MC server file to /minecraft-server
-COPY server.jar server.properties ./
+COPY server.jar server.properties config-edit ./
 
 # Run commands, e.g.: eula=true
 RUN echo "eula=true" > eula.txt
+
+# Ensure bash script can be ran by container
+RUN chmod +x config-edit
 
 # Expose default MC server port for the container to listen on
 EXPOSE 25565

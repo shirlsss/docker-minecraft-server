@@ -154,6 +154,11 @@ set_ip() {
 	tidyline
 }
 
+# Toggle hardcore mode between true/false
+toggle_hardcore() {
+	
+}
+
 
 # Allow user to choose from the following options, or to open entire config via vim if needed - continuous loop until exited
 choose_option() {
@@ -168,7 +173,12 @@ choose_option() {
 			d)
 				set_difficulty
 				;;
-			g)	set_gamemode
+			g)	
+				set_gamemode
+				;;
+
+			h)
+				toggle_hardcore
 				;;
 			q) 
 				echo "quitting"
