@@ -5,3 +5,8 @@ This is a repository to demonstrate a simple CI/CD pipeline between GitHub and a
 
 ### CLI Server Properties Config Editor
 During image build, you are prompted to change either the most common properties or to edit them in vim yourself.
+
+
+#### Notes
+* To ensure the world persists, you must run the Docker image with the tag `-v volume_name:path/to/volume`, with the right side pointing to where you want the world file to save to
+* 

@@ -4,7 +4,7 @@
 current_option=""
 
 # Variable to set which property file to use
-properties='testing.properties'
+properties='server.properties'
 
 # Common-use variables
 dotted_line="--------------------------------------"
@@ -111,7 +111,8 @@ set_difficulty() {
 					break
 				else
 					echo "Invalid option - please try again"
-					tidyline
+					echo ${dotted_line}
+					continue
 				fi
 	done
 	echo "Changing difficulty to ${difficulty} inside ${properties}"
@@ -156,15 +157,47 @@ set_ip() {
 
 # Toggle hardcore mode between true/false
 toggle_hardcore() {
-	
+	local existing_setting=$(cat $properties | grep ^hardcore=.*)
+	local setting=${existing_setting##*=}
+	if [[ ${setting} == "true" ]]; then
+		echo
+		echo "Toggling hardmode off..."
+		echo 
+		sed -i "s/^hardcore=.*/^hardcore=false/g" ${properties}
+		tidyline
+	else
+		echo 
+		echo "Toggling hardmode on..."
+		echo
+		sed -i "s/^hardcore=.*/^hardcore=true/g" ${properties}
+		tidyline
+	fi
 }
 
+# TODO: Change server MOTD
+set_motd() {
+	echo
+}
 
-# Allow user to choose from the following options, or to open entire config via vim if needed - continuous loop until exited
-choose_option() {
+# TODO: Toggle PVP
+toggle_pvp() {
+	echo
+}
+
+# TODO: Toggle flight permissions
+toggle_flight() {
+	echo
+}
+
+#TODO: Open server.properties file in vim
+set_in_editor() {
+	echo
+}
+
+select_option() {
+	display_options
 	continue=1
 	while [[ continue -eq 1 ]]; do
-		display_options
 		read -p "Please choose from the following options, or 'q' to quit: " current_option
 		case "${current_option}" in
 			.)
@@ -174,30 +207,61 @@ choose_option() {
 				set_difficulty
 				;;
 			g)	
-				set_gamemode
+				set_gamemodes
 				;;
 
 			h)
 				toggle_hardcore
 				;;
 			q) 
-				echo "quitting"
-				exit 1
+				echo "Launching the server with current settings..."
+				return 1
 				;;
 			ip)
 				set_ip
 				;;
 			*)
-				echo "boo"
-				exit 1
+				echo "Invalid option, please try again..."
+				echo
+				continue
 				;;
 		esac
 	done
 }
 
+# Allow user to choose from the following options, or to open entire config via vim if needed - continuous loop until exited
+menu() {
+	continue=1
+	while [[ continue -eq 1 ]]; do
+		if [[ -s server.properties ]]; then
+			read -p "Found an existing config file! Would you like to edit this file? y/n " edit
+			case "${edit}" in
+				y)
+					select_option
+					;;
+				n)
+					return 1
+					;;
+				*)
+					echo "Invalid option, please try again..."
+					echo
+					continue
+					;;
+			esac
+		else
+			echo "Config file does not currently exist - creating one..."
+			cp ./server.properties.bak ./server.properties
+			select_option
+			return 1
+		fi
+	done
+}
+
 main() {
+	# cd /data
 	intro
-	choose_option
+	menu
+	exec java -jar server.jar
 }
 
 main
@@ -206,4 +270,4 @@ main
 # 	display_current
 # }
 
-trial
+# trial
