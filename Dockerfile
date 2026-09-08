@@ -2,7 +2,7 @@
 FROM eclipse-temurin:25-jre-ubi10-minimal
 
 # Create and set working directory
-WORKDIR /minecraft-server
+WORKDIR /opt/minecraft
 
 # Copy the included server.jar MC server file to /minecraft-server
 COPY server.jar config-edit server.properties.bak ./

@@ -4,7 +4,7 @@
 current_option=""
 
 # Variable to set which property file to use
-properties='server.properties'
+properties='testing.properties'
 
 # Common-use variables
 dotted_line="--------------------------------------"
@@ -18,9 +18,8 @@ tidyline() {
 
 # Print introduction
 intro() {
-echo 'Welcome to the MC server config editor!'
-echo "note: to set IP, make sure an environment variable named 'SERVER_IP' exists"
-echo 
+	echo -e '\nWelcome to the MC server config editor!\nnote: to set IP, make sure an environment variable named 'SERVER_IP' exists\n'
+	tidyline
 }
 
 # Print options for changing the server config file
@@ -65,15 +64,18 @@ EOF
 display_current() {
 	local gamemode=$(cat $properties | grep ^gamemode)
 	local hardcore=$(cat $properties | grep ^hardcore)
+	local motd=$(cat $properties | grep ^motd)
 	local difficulty=$(cat $properties | grep ^difficulty)
 	local pvp=$(cat $properties | grep ^pvp)
 	local flight=$(cat $properties | grep ^allow-flight)
 	local ip=$(cat $properties | grep ^server-ip)
 cat << EOF
 	
-	Current settings: 
+	Current settings: 	
 ${dotted_line}
+
 	gamemode = ${gamemode##*=}
+	motd= "${motd##*=}"
 	hardcore = ${hardcore##*=}
 	difficulty = ${difficulty##*=}
 	pvp = ${pvp##*=}
@@ -115,7 +117,7 @@ set_difficulty() {
 					continue
 				fi
 	done
-	echo "Changing difficulty to ${difficulty} inside ${properties}"
+	echo "Changing difficulty to ${difficulty}..."
 	sed -i "s/difficulty=.*/difficulty=${difficulty}/g" ${properties}
 	tidyline
 }
@@ -160,44 +162,69 @@ toggle_hardcore() {
 	local existing_setting=$(cat $properties | grep ^hardcore=.*)
 	local setting=${existing_setting##*=}
 	if [[ ${setting} == "true" ]]; then
-		echo
-		echo "Toggling hardmode off..."
-		echo 
-		sed -i "s/^hardcore=.*/^hardcore=false/g" ${properties}
+		echo -e "\nToggling hardcore mode off...\n"
+		sed -i "s/^hardcore=.*/hardcore=false/g" ${properties}
 		tidyline
 	else
-		echo 
-		echo "Toggling hardmode on..."
-		echo
-		sed -i "s/^hardcore=.*/^hardcore=true/g" ${properties}
+		echo -e "\nToggling hardcore mode on...\n"
+		sed -i "s/^hardcore=.*/hardcore=true/g" ${properties}
 		tidyline
 	fi
 }
 
 # TODO: Change server MOTD
 set_motd() {
-	echo
+	local motd=$(cat $properties | grep ^motd)
+	echo "The current motd is = ${motd##*=}"
+	read -p "Enter new motd: " new_motd
+	echo "Setting..."
+	sed -i "s/^motd=.*/motd=${new_motd}/g" ${properties}
+	echo "MOTD set successfully! Returning to the main menu..."
+	tidyline
+	return 1
 }
 
 # TODO: Toggle PVP
+## TODO2: Create a true/false toggle helper function for the toggle settings
 toggle_pvp() {
-	echo
+	local pvp=$(cat $properties | grep ^pvp)
+	local current_pvp=${pvp##*=}
+	echo "PVP is currently set to ${current_pvp}"
+	if [[ ${current_pvp} == "true" ]]; then
+		echo -e "PVP is currently set to true...\nToggling PVP...\nPVP is now set to false"
+		sed -i "s/^pvp=.*/pvp=false/g" ${properties}
+	else
+		echo -e "PVP is currently set to false...\nToggling PVP...\nPVP is now set to true"
+		sed -i "s/^pvp=.*/pvp=true/g" ${properties}
+	fi
 }
 
 # TODO: Toggle flight permissions
 toggle_flight() {
-	echo
+	local flight=$(cat $properties | grep ^allow-flight)
+	local current_flight=${flight##*=}
+	echo "Flight is currently set to ${current_flight}"
+	if [[ ${current_flight} == "true" ]]; then
+		echo -e "Flight is currently set to true...\nToggling flight permissions...\nFlight is now set to false"
+		sed -i "s/^current_flight=.*/current_flight=false/g" ${properties}
+	else
+		echo -e "Flight is currently set to false...\nToggling flight permissions...\nFlight is now set to true"
+		sed -i "s/^current_flight=.*/current_flight=true/g" ${properties}
+	fi
 }
 
 #TODO: Open server.properties file in vim
 set_in_editor() {
-	echo
+	echo "Opening server.properties file in vim..."
+	tidyline
+	vim ./${properties}
+	return 1
 }
 
 select_option() {
-	display_options
 	continue=1
 	while [[ continue -eq 1 ]]; do
+		display_options
 		read -p "Please choose from the following options, or 'q' to quit: " current_option
 		case "${current_option}" in
 			.)
@@ -207,14 +234,25 @@ select_option() {
 				set_difficulty
 				;;
 			g)	
-				set_gamemodes
+				set_gamemode
 				;;
 
 			h)
 				toggle_hardcore
 				;;
+			"motd")
+				set_motd
+				;;
+			"pvp")
+				toggle_pvp
+				;;
+			f)
+				toggle_flight
+				;;
+			"steve")
+				set_in_editor
+				;;
 			q) 
-				echo "Launching the server with current settings..."
 				return 1
 				;;
 			ip)
@@ -232,26 +270,31 @@ select_option() {
 # Allow user to choose from the following options, or to open entire config via vim if needed - continuous loop until exited
 menu() {
 	continue=1
-	while [[ continue -eq 1 ]]; do
+	while [[ ${continue} -eq 1 ]]; do
 		if [[ -s server.properties ]]; then
 			read -p "Found an existing config file! Would you like to edit this file? y/n " edit
+			echo 
 			case "${edit}" in
 				y)
 					select_option
+					continue=0
+					return 1
 					;;
 				n)
+					continue=0
 					return 1
 					;;
 				*)
-					echo "Invalid option, please try again..."
-					echo
+					echo -e "Invalid option, please try again...\n"
 					continue
 					;;
 			esac
 		else
-			echo "Config file does not currently exist - creating one..."
+			echo -e "\nConfig file does not currently exist - creating one..."
+			tidyline
 			cp ./server.properties.bak ./server.properties
 			select_option
+			continue=0
 			return 1
 		fi
 	done
@@ -261,7 +304,9 @@ main() {
 	# cd /data
 	intro
 	menu
-	exec java -jar server.jar
+	echo -e "\nLaunching the server with current settings..."
+	tidyline
+	# exec java -jar server.jar
 }
 
 main

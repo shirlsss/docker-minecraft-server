@@ -6,7 +6,29 @@ This is a repository to demonstrate a simple CI/CD pipeline between GitHub and a
 ### CLI Server Properties Config Editor
 During image build, you are prompted to change either the most common properties or to edit them in vim yourself.
 
+### How to Run the Server
+1. Build the Docker image from the Dockerfile  
+    - `docker build -t mc-server .`
+2. Run the Docker image with our specified Docker volume to store persistent world/server data/files/configuration
+    - `docker run --init -it -p 25565:25565 -v mc-data:/data mc-server`
+        - `mc-data` is the name of the Docker volume that will be managed on our host machine - commonly stored in `/var/lib/docker/volumes/`
 
-#### Notes
-* To ensure the world persists, you must run the Docker image with the tag `-v volume_name:path/to/volume`, with the right side pointing to where you want the world file to save to
-* 
+## Structure of the Container
+```text
+/ (root)
+├── opt/
+|   ├── minecraft/
+|           ├── config-edit.sh
+|           ├── server.jar
+|           ├── server.properties.bak # backup server.properties file, do not touch
+|           ├── data/
+|              ├── server.properties
+|              ├── [world data...]
+...    
+```
+
+### Notes
+#### Docker volumes
+* To ensure the world persists, you must run the Docker image with the tag `-v volume_name:path/to/volume`, with the right side pointing to where you want the world file to save to inside the container, with `volume_name` being stored on your host machine
+    - ex. `mc-data` will live in `/var/lib/docker/volumes/mc-data/_data`
+    - We can verify the hostpath and metadata using the CLI - `docker volume inspect mc-data`
