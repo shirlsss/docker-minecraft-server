@@ -10,7 +10,7 @@ During image build, you are prompted to change either the most common properties
 1. Build the Docker image from the Dockerfile  
     - `docker build -t mc-server .`
 2. Run the Docker image with our specified Docker volume to store persistent world/server data/files/configuration
-    - `docker run --init -it -p 25565:25565 -v mc-data:/data mc-server`
+    - `docker run --init -it -p 25565:25565 -v mc-data:/opt/minecraft/data mc-server`
         - `mc-data` is the name of the Docker volume that will be managed on our host machine - commonly stored in `/var/lib/docker/volumes/`
 
 ## Structure of the Container

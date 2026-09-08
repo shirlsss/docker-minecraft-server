@@ -4,7 +4,7 @@
 current_option=""
 
 # Variable to set which property file to use
-properties='testing.properties'
+properties='server.properties'
 
 # Common-use variables
 dotted_line="--------------------------------------"
@@ -203,7 +203,6 @@ toggle_pvp() {
 toggle_flight() {
 	local flight=$(cat $properties | grep ^allow-flight)
 	local current_flight=${flight##*=}
-	echo "Flight is currently set to ${current_flight}"
 	if [[ ${current_flight} == "true" ]]; then
 		echo -e "Flight is currently set to true...\nToggling flight permissions...\nFlight is now set to false"
 		sed -i "s/^current_flight=.*/current_flight=false/g" ${properties}
@@ -301,18 +300,12 @@ menu() {
 }
 
 main() {
-	# cd /data
+	cd /opt/minecraft/data/
 	intro
 	menu
 	echo -e "\nLaunching the server with current settings..."
 	tidyline
-	# exec java -jar server.jar
+	exec java -jar /opt/minecraft/server.jar
 }
 
 main
-
-# trial() {
-# 	display_current
-# }
-
-# trial
