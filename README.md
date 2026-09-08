@@ -4,7 +4,9 @@ This is a repository to demonstrate a simple CI/CD pipeline between GitHub and a
 ## Features
 
 ### CLI Server Properties Config Editor
-During image build, you are prompted to change either the most common properties or to edit them in vim yourself.
+* During image build, you are prompted to change either the most common properties or to edit them in vim yourself.
+* `/servers` contains various server.jar files for Fabric, different Minecraft versions, etc.
+    * ensure you `cp` the server.jar you wish to use, and rename to exactly `server.jar`
 
 ### How to Run the Server
 1. Build the Docker image from the Dockerfile  
