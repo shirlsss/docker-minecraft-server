@@ -257,6 +257,10 @@ select_option() {
 			ip)
 				set_ip
 				;;
+			"exit")
+				echo -e "\nQuitting entire process..."
+				docker stop
+				;;
 			*)
 				echo "Invalid option, please try again..."
 				echo
@@ -291,7 +295,7 @@ menu() {
 		else
 			echo -e "\nConfig file does not currently exist - creating one..."
 			tidyline
-			cp ./server.properties.bak ./server.properties
+			cp ../server.properties.bak ./server.properties
 			select_option
 			continue=0
 			return 1

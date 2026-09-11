@@ -16,6 +16,11 @@ RUN chmod +x config-edit
 # Expose default MC server port for the container to listen on
 EXPOSE 25565
 
+# Install vim to be used as needed during config-setup and then switch back to regular user
+USER ROOT
+RUN microdnf install -y vim && microdnf clean all
+USER 10001
+
 # Run the server.jar when the container boots up
 # CMD ["java", "-jar", "server.jar"]
 CMD ["./config-edit"]
