@@ -152,8 +152,8 @@ set_gamemode() {
 # Set property file's IP to current environment variable injected by Docker under SERVER_IP. Do not hardcode IP!
 set_ip() {
 	echo "Setting server IP to current environment variable at SERVER_IP..."
-	sed -i "s/server-ip=.*/server-ip=${SERVER_IP}:25565/g" ${properties}
-	echo "Current IP=${SERVER_IP}:25565"
+	sed -i "s/server-ip=.*/server-ip=${SERVER_IP}/g" ${properties}
+	echo "Current IP=${SERVER_IP}"
 	tidyline
 }
 
