@@ -1,4 +1,5 @@
 # Every time I push to repo, run ShellCheck GitHub Action wrapper to ensure proper error-free syntax
+name: CI - ShellCheck for bash scripts
 
 on:
   push:
