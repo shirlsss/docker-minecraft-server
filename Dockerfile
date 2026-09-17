@@ -5,7 +5,7 @@ FROM eclipse-temurin:25-jre-ubi10-minimal
 WORKDIR /opt/minecraft
 
 # Copy the included server.jar MC server file to /minecraft-server
-COPY server.jar config-edit server.properties.bak ./
+COPY server.jar config-edit.sh server.properties.bak ./
 
 # Expose default MC server port for the container to listen on
 EXPOSE 25565
