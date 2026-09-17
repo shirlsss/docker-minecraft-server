@@ -1,0 +1,19 @@
+# Every time I push changes to the repo, run the hadolint Dockerfile linter to "build best practice" Dockerfiles but also check for syntax issues
+name: CI - Hadolint For Dockerfile
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo code
+        uses: actions/checkout@v4
+      - name: Run run Hadolint GHActions Wraper
+        uses: hadolint/hadolint-actions@v3.1.0
+        with:
+          dockerfile: Dockerfile
+        failure-threshold: warning
+        
