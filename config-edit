@@ -191,10 +191,10 @@ toggle_pvp() {
 	local current_pvp=${pvp##*=}
 	echo "PVP is currently set to ${current_pvp}"
 	if [[ ${current_pvp} == "true" ]]; then
-		echo -e "PVP is currently set to true...\nToggling PVP...\nPVP is now set to false"
+		echo -e "Toggling PVP...\nPVP is now set to false"
 		sed -i "s/^pvp=.*/pvp=false/g" ${properties}
 	else
-		echo -e "PVP is currently set to false...\nToggling PVP...\nPVP is now set to true"
+		echo -e "Toggling PVP...\nPVP is now set to true"
 		sed -i "s/^pvp=.*/pvp=true/g" ${properties}
 	fi
 }
