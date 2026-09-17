@@ -7,19 +7,16 @@ WORKDIR /opt/minecraft
 # Copy the included server.jar MC server file to /minecraft-server
 COPY server.jar config-edit server.properties.bak ./
 
-# Run commands, e.g.: eula=true
-RUN echo "eula=true" > eula.txt
-
-# Ensure bash script can be ran by container
-RUN chmod +x config-edit
-
 # Expose default MC server port for the container to listen on
 EXPOSE 25565
 
-# Install vim to be used as needed during config-setup and then switch back to regular user
 USER root 
-RUN microdnf install -y vim && microdnf clean all
-RUN mkdir -p /opt/minecraft/data && chown -R 10001:10001 /opt/minecraft/data
+# Run commands, e.g.: eula=true
+# Ensure bash script can be ran by container
+# Install vim to be used as needed during config-setup and then switch back to regular user
+RUN echo "eula=true" > eula.txt \
+    chmod +x config-edit \
+    microdnf install -y vim-9.2.1011-1.1 && microdnf clean all
 USER 10001
 
 # Run the server.jar when the container boots up
