@@ -21,4 +21,4 @@ USER 10001
 
 # Run the server.jar when the container boots up
 # CMD ["java", "-jar", "server.jar"]
-CMD ["./config-edit"]
+CMD ["./config-edit.sh"]
