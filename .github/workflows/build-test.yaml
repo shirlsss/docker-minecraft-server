@@ -21,7 +21,7 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
-          failure-threshold: warning
+          failure-threshold: error
 
     # ShellCheck that syntax is error-free in bash scripts
       - name: Checkout repo

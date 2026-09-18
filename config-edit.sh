@@ -18,7 +18,7 @@ tidyline() {
 
 # Print introduction
 intro() {
-	echo -e '\nWelcome to the MC server config editor!\nnote: to set IP, make sure an environment variable named 'SERVER_IP' exists\n'
+	echo -e '\nWelcome to the MC server config editor!'
 	tidyline
 }
 
@@ -32,7 +32,6 @@ cat  <<  EOF
 	pvp 		-	Change PVP to true or false	
 	d		-	Change difficulty
 	f		- 	Change flight permission
-	ip		-	Change server IP
 	steve		-	Change server.properties file in vim	
 
 EOF
@@ -68,7 +67,6 @@ display_current() {
 	local difficulty=$(cat $properties | grep ^difficulty)
 	local pvp=$(cat $properties | grep ^pvp)
 	local flight=$(cat $properties | grep ^allow-flight)
-	local ip=$(cat $properties | grep ^server-ip)
 cat << EOF
 	
 	Current settings: 	
@@ -80,7 +78,6 @@ ${dotted_line}
 	difficulty = ${difficulty##*=}
 	pvp = ${pvp##*=}
 	flight = ${flight##*=}
-	server-ip = ${ip##*=}
 EOF
 tidyline
 }
@@ -149,14 +146,6 @@ set_gamemode() {
 	tidyline
 }
 
-# Set property file's IP to current environment variable injected by Docker under SERVER_IP. Do not hardcode IP!
-set_ip() {
-	echo "Setting server IP to current environment variable at SERVER_IP..."
-	sed -i "s/server-ip=.*/server-ip=${SERVER_IP}/g" ${properties}
-	echo "Current IP=${SERVER_IP}"
-	tidyline
-}
-
 # Toggle hardcore mode between true/false
 toggle_hardcore() {
 	local existing_setting=$(cat $properties | grep ^hardcore=.*)
@@ -172,7 +161,6 @@ toggle_hardcore() {
 	fi
 }
 
-# TODO: Change server MOTD
 set_motd() {
 	local motd=$(cat $properties | grep ^motd)
 	echo "The current motd is = ${motd##*=}"
@@ -184,7 +172,6 @@ set_motd() {
 	return 1
 }
 
-# TODO: Toggle PVP
 ## TODO2: Create a true/false toggle helper function for the toggle settings
 toggle_pvp() {
 	local pvp=$(cat $properties | grep ^pvp)
@@ -199,20 +186,20 @@ toggle_pvp() {
 	fi
 }
 
-# TODO: Toggle flight permissions
+# Toggle flight permissions
 toggle_flight() {
 	local flight=$(cat $properties | grep ^allow-flight)
 	local current_flight=${flight##*=}
 	if [[ ${current_flight} == "true" ]]; then
-		echo -e "Flight is currently set to true...\nToggling flight permissions...\nFlight is now set to false"
-		sed -i "s/^current_flight=.*/current_flight=false/g" ${properties}
+		echo -e "\nFlight is currently set to true...\nToggling flight permissions...\nFlight is now set to false\n"
+		sed -i "s/^allow-flight=.*/allow-flight=false/g" ${properties}
 	else
-		echo -e "Flight is currently set to false...\nToggling flight permissions...\nFlight is now set to true"
-		sed -i "s/^current_flight=.*/current_flight=true/g" ${properties}
+		echo -e "\nFlight is currently set to false...\nToggling flight permissions...\nFlight is now set to true\n"
+		sed -i "s/^allow-flight=.*/allow-flight=true/g" ${properties}
 	fi
 }
 
-#TODO: Open server.properties file in vim
+# Open server.properties file in vim
 set_in_editor() {
 	echo "Opening server.properties file in vim..."
 	tidyline
@@ -253,9 +240,6 @@ select_option() {
 				;;
 			q) 
 				return 1
-				;;
-			ip)
-				set_ip
 				;;
 			"exit")
 				echo -e "\nQuitting entire process..."
