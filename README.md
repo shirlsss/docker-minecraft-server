@@ -33,10 +33,11 @@ This is a repository to demonstrate a simple CI/CD pipeline between GitHub and a
 * To ensure the world persists, you must run the Docker image with the tag `-v volume_name:path/to/volume`, with the right side pointing to where you want the world file to save to inside the container, with `volume_name` being stored on your host machine
     - ex. `mc-data` will live in `/var/lib/docker/volumes/mc-data/_data`
     - We can verify the hostpath and metadata using the CLI - `docker volume inspect mc-data`
-* Do not need to fill in the server-ip in server.properties - as long as port 25565 is forwarded and **allowed by your firewall**, users can connect via your `public_ip:25565` 
-* Troubleshooting the containter
-    * to view the image directory, `docker run --rm mc-server ls -la /opt/minecraft`
-    * to also see the Docker volume, `docker run --rm -v mc-data:/opt/minecraft/data mc-server ls -la /opt/minecraft`
+### `server.properties`
+* Do not need to fill in the server-ip in server.properties - as long as port 25565 is forwarded and **allowed by your firewall**, users can connect via your `public_ip:25565`
+### Troubleshooting the containter
+* to view the image directory, `docker run --rm mc-server ls -la /opt/minecraft`
+* to also see the Docker volume, `docker run --rm -v mc-data:/opt/minecraft/data mc-server ls -la /opt/minecraft`
 
 ## TODO:
 To be done, one day in the future!
