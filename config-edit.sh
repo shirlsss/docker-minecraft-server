@@ -259,24 +259,25 @@ menu() {
 	continue=1
 	while [[ ${continue} -eq 1 ]]; do
 		if [[ -s server.properties ]]; then
-			read -p "Found an existing config file! Would you like to edit this file? y/n " edit
-			echo
-		       	chmod 777 server.properties	
-			case "${edit}" in
-				y)
-					select_option
-					continue=0
-					return 1
-					;;
-				n)
-					continue=0
-					return 1
-					;;
-				*)
-					echo -e "Invalid option, please try again...\n"
-					continue
-					;;
-			esac
+			echo -e "Existing config found...\nstarting server\n"
+			# read -p "Found an existing config file! Would you like to edit this file? y/n " edit
+			# echo
+		    #    	chmod 777 server.properties	
+			# case "${edit}" in
+			# 	y)
+			# 		select_option
+			# 		continue=0
+			# 		return 1
+			# 		;;
+			# 	n)
+			# 		continue=0
+			# 		return 1
+			# 		;;
+			# 	*)
+			# 		echo -e "Invalid option, please try again...\n"
+			# 		continue
+			# 		;;
+			# esac
 		else
 			echo -e "\nConfig file does not currently exist - creating one..."
 			tidyline
