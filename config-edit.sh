@@ -260,7 +260,8 @@ menu() {
 	while [[ ${continue} -eq 1 ]]; do
 		if [[ -s server.properties ]]; then
 			echo -e "Existing config found...\nstarting server\n"
-			continue
+			echo "test"
+			return 1
 			# read -p "Found an existing config file! Would you like to edit this file? y/n " edit
 			# echo
 		    #    	chmod 777 server.properties	
