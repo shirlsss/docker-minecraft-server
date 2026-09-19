@@ -1,5 +1,5 @@
-# Execute docker build on image to test that image actually successfully builds
-name: ShellCheck, Docker hadolint, Docker build/push
+# Faster build for testing purposes
+name: Docker build/push
 
 permissions:
   contents: read
@@ -7,7 +7,7 @@ permissions:
 
 on:
   push: 
-    branches: ["main", "experimental"]
+    branches: ["experimental"]
 
 jobs:
   ci:
