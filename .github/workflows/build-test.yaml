@@ -7,12 +7,29 @@ permissions:
 
 on:
   push: 
-    branches: ["main", "experimental"]
+    branches: ["main"]
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
+
+    # Check that Dockerfile syntax is correct and structure follows best-practices
+      - name: Checkout repo code
+        uses: actions/checkout@v4
+      - name: Run run Hadolint GHActions Wraper
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: error
+
+    # ShellCheck that syntax is error-free in bash scripts
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Run ShellCheck wrapper
+        uses: ludeeus/action-shellcheck@master
+        with:
+          severity: error
 
     # Check that Docker image builds successfully then push to GHCR
     # Set up Docker Buildx
