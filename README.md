@@ -7,7 +7,7 @@ This is a repository to demonstrate a simple CI/CD pipeline between GitHub and a
 * During image build, you are prompted to change either the most common properties or to edit them in vim yourself.
 * Current server version: 26.3
 
-### How to Run the Server
+### How to Run the Container Locally
 1. Build the Docker image from the Dockerfile  
     - `docker build -t mc-server .`
 2. Run the Docker image with our specified Docker volume to store persistent world/server data/files/configuration
@@ -28,6 +28,12 @@ This is a repository to demonstrate a simple CI/CD pipeline between GitHub and a
 ...    
 ```
 
+### How to Run the Container from GitHub Container Registry (GHCR)
+* Since we are demonstrating a simple CI/CD pipeline with our Docker container, the continous delivery/deployment end will be done by Watchtower
+* Watchtower will be deployed as a container on our host machine, which then watches in our `/var/run/docker.sock` for any containers
+* It then uses that info to watch the GHCR/Docker registry and rebuilds and redeploys as needed
+    * Because Watchtower rebuilds for us - cannot start the container with a script. 
+
 ### Notes
 #### Docker volumes
 * To ensure the world persists, you must run the Docker image with the tag `-v volume_name:path/to/volume`, with the right side pointing to where you want the world file to save to inside the container, with `volume_name` being stored on your host machine
@@ -40,7 +46,10 @@ This is a repository to demonstrate a simple CI/CD pipeline between GitHub and a
 * to also see the Docker volume, `docker run --rm -v mc-data:/opt/minecraft/data mc-server ls -la /opt/minecraft`
 
 ## TODO:
-To be done, one day in the future!
+### Near future
+* Configure config-edit.sh to read from a .env file so it can be autodeployed
+* Decide if I want to publish my backup script
+#### To be done, one day in the future!
 * Add server version selection via cURL
 * Add modded options (Forge, Fabric)
 * Add modpack support
