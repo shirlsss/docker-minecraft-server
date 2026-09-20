@@ -47,6 +47,7 @@ This is a repository to demonstrate a simple CI/CD pipeline between GitHub and a
 ## TODO:
 ### Near future
 * Configure config-edit.sh to read from a .env file so it can be autodeployed
+* Decide if I want to publish my backup script
 #### To be done, one day in the future!
 * Add server version selection via cURL
 * Add modded options (Forge, Fabric)
