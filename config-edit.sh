@@ -298,7 +298,7 @@ main() {
 	menu
 	echo -e "\nLaunching the server with current settings..."
 	tidyline
-	exec java -jar /opt/minecraft/server.jar
+	exec java -Xms6G -Xmx6G -jar /opt/minecraft/server.jar
 }
 
 main
